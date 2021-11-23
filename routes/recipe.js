@@ -339,7 +339,7 @@ router.post('/recipe', (req, res) => {
         conn.release();
     })
 })
-
+// 재료 추가
 router.post('/frige', (req, res) => {
     const userId = req.body.userId;
     console.log('userId', userId);
@@ -437,9 +437,13 @@ router.post('/userFridge', (req, res) => {
 })
 // 유저 재료 삭제
 router.post('/ingredientDelete', (req, res) => {
+    console.log('hi ',req.body.length);
     const id = req.body.id;
+    console.log('id', id);
     const userId = req.body.userId;
+    console.log('userId', userId)
     const list = req.body.ingredient;
+    console.log(list);
     console.log(list.length);
     pool.getConnection((err, conn) => {
         if(err) {
@@ -447,12 +451,13 @@ router.post('/ingredientDelete', (req, res) => {
             res.send('fail');
         }
         else {
-            for(let i = 0; i < list.length; i++) {
-                conn.query('DELETE FROM fridge WHERE id = ? AND user_ID = ? AND each_ingredient_id = ?', [id[i], userId, list[i]], (err, result, fields) => {
+            for(let i = 0; i < req.body.length; i++) {
+                conn.query('DELETE FROM fridge WHERE id = ? AND user_ID = ? AND each_ingredient_id = ?', [id, userId, list], (err, result, fields) => {
                     if(err) {
                         console.log(err);
                     }
                     else {
+                        console.log(result);
                         res.send('hi');
                     }
                 })
