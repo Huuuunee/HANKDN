@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../controller/passport')
 require('passport')
+const crypto = require('crypto');
 const mysql = require('mysql2');
 const db_info = {
     host: 'defalut.cmj5m2fzc8ae.ap-northeast-2.rds.amazonaws.com',
@@ -56,17 +57,20 @@ router.post('/signup', (req, res) => {
             if(err) throw err;
             try {
                 if(result[0] === undefined) {
-                    console.log('여기 result',result[0]);
-                    conn.query('insert into user (id, password, nickname, email) values (?,?,?,?)', [userId, password, nickname, email], (err, result, fields) => {
-                        if(err) {
-                            console.log(err);
-                            res.send('fafa1')
-                        }
-                        else {
-                            console.log(result)
-                            res.send('suce')
-                        }
-                    });
+                                //들어온 비밀번호 암호화
+                    setTimeout(() => {
+                        console.log('여기 result',result[0]);
+                        conn.query('insert into user (id, password, nickname, email) values (?,?,?,?)', [userId, password, nickname, email], (err, result, fields) => {
+                            if(err) {
+                                console.log(err);
+                                res.send('fafa1')
+                            }
+                            else {
+                                console.log(result)
+                                res.send('suce')
+                            }
+                        });
+                    }, 1000)
                     conn.release();
                 } else {
                     res.send('fafa2')
@@ -120,15 +124,17 @@ router.post('/emailOverlap', (req, res) => {
 // 프로필 이름 가져오기 
 router.post('/getNickname', (req, res) => {
     const userId = req.body.userId;
+    console.log(userId)
     pool.getConnection((err, conn) => {
-        conn.query('SELECT nickname FROM user WHERE id = ?', userId, (err, result, fields) => {
+        conn.query('SELECT nickname, profile FROM user WHERE id = ?', userId, (err, result, fields) => {
             if(err){
                 res.send('getfafa1');
             }
             else {
-                console.log(result[0].nickname);
-                let getNickname = result[0].nickname;
-                res.send(getNickname);
+                console.log(result)
+                // console.log(result[0].nickname);
+                // let getNickname = result[0].nickname;
+                res.send(result);
             }
         })
         conn.release();

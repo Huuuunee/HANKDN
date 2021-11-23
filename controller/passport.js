@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const app = express();
 const mysql = require('mysql2');
+const crypto = require('crypto')
+const saltRounds = 10;
 const db_info = {
     host: 'defalut.cmj5m2fzc8ae.ap-northeast-2.rds.amazonaws.com',
     port: 3306,
@@ -37,7 +39,6 @@ passport.use('local', new LocalStrategy({
     session: true // 세션에 저장 여부
 }, (req, userId, password, done) => {
     console.log('passport의 local-login : ', userId, password)
-
     pool.getConnection((err, conn) => {
         conn.query('SELECT id, password FROM user WHERE id = ?', userId, (err, result, fields) => {
             console.log(result);
