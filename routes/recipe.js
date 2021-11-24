@@ -437,7 +437,7 @@ router.post('/userFridge', (req, res) => {
 })
 // 유저 재료 삭제
 router.post('/ingredientDelete', (req, res) => {
-    console.log('hi ',req.body.length);
+    console.log('hi ',req.body.id.length);
     const id = req.body.id;
     console.log('id', id);
     const userId = req.body.userId;
@@ -451,17 +451,17 @@ router.post('/ingredientDelete', (req, res) => {
             res.send('fail');
         }
         else {
-            for(let i = 0; i < req.body.length; i++) {
-                conn.query('DELETE FROM fridge WHERE id = ? AND user_ID = ? AND each_ingredient_id = ?', [id, userId, list], (err, result, fields) => {
+            for(let i = 0; i < req.body.id.length; i++) {
+                conn.query('DELETE FROM fridge WHERE id = ? AND user_ID = ? AND each_ingredient_id = ?', [id[i], userId, list[i]], (err, result, fields) => {
                     if(err) {
                         console.log(err);
                     }
                     else {
                         console.log(result);
-                        res.send('hi');
                     }
                 })
             }
+            res.send('hi');
             conn.release()
         }
     })
@@ -469,9 +469,10 @@ router.post('/ingredientDelete', (req, res) => {
 // 요리하기
 router.post('/frigeRecipeList', (req, res) => {
     const userId = req.body.userId;
+    const foodChoose = req.body.foodChoose
     const list = [];
     pool.getConnection((err, conn) => {
-        conn.query('SELECT * FROM fridge WHERE user_ID = ?', userId, (err, result, fields) => {
+        conn.query('SELECT * FROM fridge WHERE user_ID = ?', foodChoose, (err, result, fields) => {
             console.log(result);
             const count = result.length
             console.log('count', count);
@@ -480,7 +481,7 @@ router.post('/frigeRecipeList', (req, res) => {
             }
             console.log(list)
             pool.getConnection((err, conn) => {
-                conn.query('SELECT * FROM food_ingredient WHERE each_ingredient_id IN (?)', [list], (err, result, fields) => {
+                conn.query('SELECT * FROM food_ingredient WHERE each_ingredient_id IN (?)', [foodChoose], (err, result, fields) => {
                     console.log('two result : ',result);
                     let foodId = [];
                     for(let j = 0; j < result.length; j++) {

@@ -14,7 +14,7 @@ const post = require('./routes/post')
 const recipe = require('./routes/recipe')
 
 const email = require('./routes/email2')
-const hostname = '10.120.74.70'
+const hostname = '10.120.74.60'
 
 // view engine setup
 app.set('views', path.join(__dirname, './views'));
